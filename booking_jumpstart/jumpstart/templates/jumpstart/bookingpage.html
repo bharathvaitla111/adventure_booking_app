@@ -1,0 +1,81 @@
+{% extends 'jumpstart/base.html' %}
+{% load static %}
+{% load compress %}
+<!DOCTYPE html>
+< lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+    <link rel='stylesheet' href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.4.0/css/font-awesome.min.css'>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <title>newhome</title>
+    {% compress css %}
+    <link type="text/x-scss" href="{% static 'scss/new_home.scss' %}" rel="stylesheet" media="screen">
+    {% endcompress %}
+    <script src='//cdnjs.cloudflare.com/ajax/libs/jquery/2.1.3/jquery.min.js'></script>
+    <script type="text/javascript" src="{% static 'js/new_home.js' %}"></script>
+</head>
+
+{% block body_block %}
+
+
+
+{% block content %}
+  <h1>Create Booking</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+      <div>
+      <label>Total Price:</label>
+      <span id="total-price">{{ form.instance.totalPrice }}</span>
+    </div>
+    <button type="submit">Create</button>
+  </form>
+
+     <script>
+    function calculateTotalPrice() {
+      const adultTicketCount = document.getElementById('id_adultTicketCount').value;
+      const childTicketCount = document.getElementById('id_ChildTicketCount').value;
+      const fastTrackAdultTicketCount = document.getElementById('id_FastTrackAdultTicketCount').value;
+      const fastTrackChildTicketCount = document.getElementById('id_FastTrackChildTicketCount').value;
+      const seniorCitizenTicketCount = document.getElementById('id_SeniorCitizenTicketCount').value;
+      const adultCollegeIdOfferTicketCount = document.getElementById('id_AdultCollegeIdOfferTicketCount').value;
+
+      const adultTicketPrice = 50;
+      const childTicketPrice = 30;
+      const fastTrackAdultTicketPrice = 80;
+      const fastTrackChildTicketPrice = 50;
+      const seniorCitizenTicketPrice = 40;
+      const adultCollegeIdOfferTicketPrice = 40;
+
+      const totalPrice = (adultTicketCount * adultTicketPrice) +
+                         (childTicketCount * childTicketPrice) +
+                         (fastTrackAdultTicketCount * fastTrackAdultTicketPrice) +
+                         (fastTrackChildTicketCount * fastTrackChildTicketPrice) +
+                         (seniorCitizenTicketCount * seniorCitizenTicketPrice) +
+                         (adultCollegeIdOfferTicketCount * adultCollegeIdOfferTicketPrice);
+
+      document.getElementById('total-price').innerHTML = totalPrice;
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+      // Calculate total price on page load
+      calculateTotalPrice();
+
+      // Calculate total price when any ticket count changes
+      const ticketCountInputs = document.querySelectorAll('.ticket-count-input');
+      ticketCountInputs.forEach(function(input) {
+        input.addEventListener('input', calculateTotalPrice);
+      });
+    });
+  </script>
+{% endblock %}
+
+{% endblock %}
+
+
+
+
