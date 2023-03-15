@@ -24,15 +24,17 @@
 
 
 {% block content %}
-  <h1>Create Booking</h1>
-  <form method="post">
+  <h1 align="center">Create Booking</h1>
+  <form method="post" class="w3-container w3-light-grey">
     {% csrf_token %}
     {{ form.as_p }}
+      <center>
       <div>
-      <label>Total Price:</label>
-      <span id="total-price">{{ form.instance.totalPrice }}</span>
+      <h4>Total Price: CAD $</h4>
+      <h5 id="total-price">{{ form.instance.totalPrice}}</h5>
     </div>
-    <button type="submit">Create</button>
+    <button  class="w3-btn w3-blue-grey" type="submit">Book Your Adventure</button>
+    </center>
   </form>
 
      <script>

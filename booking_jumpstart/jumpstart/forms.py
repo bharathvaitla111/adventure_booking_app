@@ -1,4 +1,8 @@
+import phonenumber_field
+import re
 from django.forms import ModelForm, TextInput, EmailInput, PasswordInput, forms
+from django.utils import timezone
+
 from .models import Customer, Booking
 from django import forms
 from django.contrib.auth.hashers import make_password
@@ -109,32 +113,41 @@ class BookingForm(ModelForm):
             # 'totalPrice',
         ]
         widgets = {
-            'reserveDate': forms.DateInput(attrs={'type': 'date'}),
-            'adultTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input'}),
-            'ChildTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input'}),
-            'FastTrackAdultTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input'}),
-            'FastTrackChildTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input'}),
-            'SeniorCitizenTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input'}),
-            'AdultCollegeIdOfferTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input'}),
+            'reserveDate': forms.DateInput(attrs={'type': 'date',
+                                                  'class': 'w3-input w3-border w3-round'}),
+            'adultTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input w3-input w3-border w3-round'}),
+            'ChildTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input w3-input w3-border w3-round'}),
+            'FastTrackAdultTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input w3-input w3-border w3-round'}),
+            'FastTrackChildTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input w3-input w3-border w3-round'}),
+            'SeniorCitizenTicketCount': forms.NumberInput(attrs={'class': 'ticket-count-input w3-input w3-border w3-round'}),
+            'AdultCollegeIdOfferTicketCount': forms.NumberInput(
+                attrs={'class': 'ticket-count-input w3-input w3-border w3-round'}),
+            'phoneNumber': forms.TextInput(attrs={
+                'pattern': r'^\(?([0-9]{3})\)?[-. ]?([0-9]{3})[-. ]?([0-9]{4})$',
+                'title': 'Please enter a valid phone number in the format 999-999-9999',
+                'class': 'w3-input w3-border w3-round'
+            }),
+            'reserveDate': forms.DateInput(attrs={
+                'type': 'date',
+                'min': timezone.localdate().isoformat(),
+                'class': 'w3-input w3-border'
+            }),
+            'address': forms.TextInput(attrs={'class': 'w3-input w3-border w3-round'})
+
         }
 
     def clean(self):
-        adultTicketPrice = 50
-        ChildTicketPrice = 30
-        FastTrackAdultTicketPrice = 80
-        FastTrackChildTicketPrice = 50
-        SeniorCitizenTicketPrice = 40
-        AdultCollegeIdOfferTicketPrice = 40
-
         cleaned_data = super().clean()
-
         adult_ticket_count = cleaned_data.get('adultTicketCount', 0)
         child_ticket_count = cleaned_data.get('ChildTicketCount', 0)
         fast_track_adult_ticket_count = cleaned_data.get('FastTrackAdultTicketCount', 0)
         fast_track_child_ticket_count = cleaned_data.get('FastTrackChildTicketCount', 0)
-        senior_citizen_ticket_count = cleaned_data.get('ChildTicketCount', 0)
+        senior_citizen_ticket_count = cleaned_data.get('SeniorCitizenTicketCount', 0)
         adult_college_id_offer_ticket_count = cleaned_data.get('AdultCollegeIdOfferTicketCount', 0)
 
-        cleaned_data['totalPrice'] = (adult_ticket_count * adultTicketPrice) + (
-                    child_ticket_count * ChildTicketPrice) + (fast_track_adult_ticket_count * FastTrackAdultTicketPrice) + (fast_track_child_ticket_count * FastTrackChildTicketPrice)+ (senior_citizen_ticket_count * SeniorCitizenTicketPrice) + (adult_college_id_offer_ticket_count * AdultCollegeIdOfferTicketPrice)
+        total_tickets = adult_ticket_count + child_ticket_count + fast_track_adult_ticket_count + fast_track_child_ticket_count + senior_citizen_ticket_count + adult_college_id_offer_ticket_count
+
+        if total_tickets == 0:
+            raise forms.ValidationError("Please select at least one ticket.")
+
         return cleaned_data
