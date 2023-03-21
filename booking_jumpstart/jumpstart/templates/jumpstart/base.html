@@ -30,10 +30,11 @@
 
     {% if user.is_authenticated %}
         <a href="{% url 'create_booking' %}" class="w3-bar-item w3-button w3-mobile">Book</a>
+
     {% else %}
         <a href="{% url 'login' %}" class="w3-bar-item w3-button w3-mobile">Book</a>
     {% endif %}
-
+<a href="{% url 'order_history' %}" class="w3-bar-item w3-button w3-mobile">Order History</a>
   <a href="#about" class="w3-bar-item w3-button w3-mobile">About</a>
   <a href="#contact" class="w3-bar-item w3-button w3-mobile">Contact</a>
 

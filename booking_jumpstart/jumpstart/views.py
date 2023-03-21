@@ -50,6 +50,17 @@ class Welcome(View):
     def get(self, request):
         return render(request, 'jumpstart/new_home.html')
 
+class OrderHistoryView(View):
+    template_name = 'jumpstart/order_history.html'
+
+    def get(self, request):
+        user_id = request.session.get('user_id')
+        customer = Customer.objects.get(id=user_id)
+        bookings = Booking.objects.filter(customer=customer)
+        context = {'bookings': bookings}
+        return render(request, self.template_name, context)
+
+
 
 class ForgotPassword(View):
 
