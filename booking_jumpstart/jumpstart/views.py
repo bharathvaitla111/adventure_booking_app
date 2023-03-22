@@ -10,6 +10,9 @@ from django.contrib import messages
 from django.contrib.auth import authenticate
 from .forms import LoginForm, RegistrationForm, Forgot, BookingForm
 from .models import Booking, Customer, User
+from django.views.generic import View
+from django.shortcuts import render
+
 
 
 # Create your views here.
@@ -50,9 +53,9 @@ class Welcome(View):
     def get(self, request):
         return render(request, 'jumpstart/new_home.html')
 
+
 class OrderHistoryView(View):
     template_name = 'jumpstart/order_history.html'
-
     def get(self, request):
         user_id = request.session.get('user_id')
         customer = Customer.objects.get(id=user_id)
