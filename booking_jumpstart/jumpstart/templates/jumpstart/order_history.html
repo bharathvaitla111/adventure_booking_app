@@ -1,8 +1,5 @@
 {% extends 'jumpstart/base.html' %}
 
-
-
-
 {% block body_block %}
 
 {% block content %}
@@ -15,6 +12,25 @@
         Booking Date: {{ booking.bookingDate }}
         <br>
         Total Price: {{ booking.totalPrice }}
+        {% if booking.adultTicketCount > 0 %}
+          <br>Adult Tickets: {{ booking.adultTicketCount }}
+        {% endif %}
+        {% if booking.ChildTicketCount > 0 %}
+          <br>Child Tickets: {{ booking.ChildTicketCount }}
+        {% endif %}
+        {% if booking.FastTrackAdultTicketCount > 0 %}
+          <br>Fast Track Adult Tickets: {{ booking.FastTrackAdultTicketCount }}
+        {% endif %}
+        {% if booking.FastTrackChildTicketCount > 0 %}
+          <br>Fast Track Child Tickets: {{ booking.FastTrackChildTicketCount }}
+        {% endif %}
+        {% if booking.SeniorCitizenTicketCount > 0 %}
+          <br>Senior Citizen Tickets: {{ booking.SeniorCitizenTicketCount }}
+        {% endif %}
+        {% if booking.AdultCollegeIdOfferTicketCount > 0 %}
+          <br>Adult College ID Offer Tickets: {{ booking.AdultCollegeIdOfferTicketCount }}
+        {% endif %}
+
       </li>
     {% empty %}
       <li>No bookings found.</li>
@@ -22,10 +38,4 @@
   </ul>
 {% endblock %}
 
-
-
 {% endblock %}
-
-
-
-
