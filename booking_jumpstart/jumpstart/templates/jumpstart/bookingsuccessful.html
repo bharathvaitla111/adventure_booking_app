@@ -1,10 +1,46 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>\</title>
-</head>
-<body>
-<h1>booking successful</h1>
-</body>
-</html>
+{% extends 'jumpstart/base.html' %}
+
+{% block body_block %}
+
+  <div class="container">
+    <h1>Booking Successful!</h1>
+
+<div class="booking-details">
+    <h2>Booking Details</h2>
+    <p><strong>Booking ID:</strong> {{ booking.id }}</p>
+    <p><strong>Booking Date:</strong> {{ booking.bookingDate }}</p>
+    <p><strong>Reservation Date:</strong> {{ booking.reserveDate }}</p>
+    <p><strong>Address:</strong> {{ booking.address }}</p>
+    <p><strong>Phone Number:</strong> {{ booking.phoneNumber }}</p>
+
+    {% if booking.adultTicketCount > 0 %}
+        <p><strong>Adult Ticket Count:</strong> {{ booking.adultTicketCount }}</p>
+    {% endif %}
+
+    {% if booking.ChildTicketCount > 0 %}
+        <p><strong>Child Ticket Count:</strong> {{ booking.ChildTicketCount }}</p>
+    {% endif %}
+
+    {% if booking.FastTrackAdultTicketCount > 0 %}
+        <p><strong>Fast Track Adult Ticket Count:</strong> {{ booking.FastTrackAdultTicketCount }}</p>
+    {% endif %}
+
+    {% if booking.FastTrackChildTicketCount > 0 %}
+        <p><strong>Fast Track Child Ticket Count:</strong> {{ booking.FastTrackChildTicketCount }}</p>
+    {% endif %}
+
+    {% if booking.SeniorCitizenTicketCount > 0 %}
+        <p><strong>Senior Citizen Ticket Count:</strong> {{ booking.SeniorCitizenTicketCount }}</p>
+    {% endif %}
+
+    {% if booking.AdultCollegeIdOfferTicketCount > 0 %}
+        <p><strong>Adult College ID Offer Ticket Count:</strong> {{ booking.AdultCollegeIdOfferTicketCount }}</p>
+    {% endif %}
+
+    <p><strong>Total Price:</strong> {{ booking.totalPrice }}</p>
+</div>
+
+
+  </div>
+
+{% endblock %}

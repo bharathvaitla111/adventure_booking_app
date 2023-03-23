@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Raleway">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" type="text/css" href="{% static 'css/booking_success.css' %}">
+    <link rel="stylesheet" type="text/css" href="{% static 'css/order_history.css' %}">
+
     <title>newhome</title>
     {% compress css %}
     <link type="text/x-scss" href="{% static 'scss/new_home.scss' %}" rel="stylesheet" media="screen">
@@ -30,8 +34,13 @@
 
     {% if user.is_authenticated %}
         <a href="{% url 'create_booking' %}" class="w3-bar-item w3-button w3-mobile">Book</a>
+
     {% else %}
         <a href="{% url 'login' %}" class="w3-bar-item w3-button w3-mobile">Book</a>
+    {% endif %}
+
+    {% if user.is_authenticated %}
+       <a href="{% url 'order_history' %}" class="w3-bar-item w3-button w3-mobile">Order History</a>
     {% endif %}
 
   <a href="#about" class="w3-bar-item w3-button w3-mobile">About</a>

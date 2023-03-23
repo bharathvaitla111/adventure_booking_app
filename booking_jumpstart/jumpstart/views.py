@@ -2,7 +2,7 @@ from datetime import date
 
 from allauth.account.views import email
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpResponse
 from django.shortcuts import render, redirect
 from django.urls import reverse
 from django.views import View
@@ -10,6 +10,8 @@ from django.contrib import messages
 from django.contrib.auth import authenticate
 from .forms import LoginForm, RegistrationForm, Forgot, BookingForm
 from .models import Booking, Customer, User
+from django.views.generic import View
+from django.shortcuts import render
 
 
 # Create your views here.
@@ -49,6 +51,61 @@ class LoginSignup(View):
 class Welcome(View):
     def get(self, request):
         return render(request, 'jumpstart/new_home.html')
+
+
+class OrderHistoryView(View):
+    template_name = 'jumpstart/order_history.html'
+
+    def get(self, request):
+        user_id = request.session.get('user_id')
+        user = User.objects.get(id=user_id)
+        customer = Customer.objects.get(id=user_id)
+        bookings = Booking.objects.filter(customer=customer)
+        context = {'bookings': bookings,
+                   'user': user}
+
+        # Add ticket count details to context if any of them are greater than zero
+        for booking in bookings:
+            if booking.adultTicketCount > 0 or booking.ChildTicketCount > 0 or \
+                    booking.FastTrackAdultTicketCount > 0 or booking.FastTrackChildTicketCount > 0 or \
+                    booking.SeniorCitizenTicketCount > 0 or booking.AdultCollegeIdOfferTicketCount > 0:
+                context['has_ticket_details'] = True
+                context['adult_tickets'] = booking.adultTicketCount
+                context['child_tickets'] = booking.ChildTicketCount
+                context['fast_track_adult_tickets'] = booking.FastTrackAdultTicketCount
+                context['fast_track_child_tickets'] = booking.FastTrackChildTicketCount
+                context['senior_citizen_tickets'] = booking.SeniorCitizenTicketCount
+                context['college_id_offer_tickets'] = booking.AdultCollegeIdOfferTicketCount
+                break
+
+        return render(request, self.template_name, context)
+
+
+class BookingSuccessView(View):
+    template_name = 'jumpstart/bookingsuccessful.html'
+
+    def get(self, request, booking_id):
+        user_id = request.session.get('user_id')
+        user = User.objects.get(id=user_id)
+        print(user)
+        print(user_id)
+        try:
+            booking = Booking.objects.get(id=booking_id)
+        except Booking.DoesNotExist:
+            return HttpResponse("Booking not found", status=404)
+
+        context = {
+            'user': user,
+            'booking': booking,
+            'adult_ticket_count': booking.adultTicketCount if booking.adultTicketCount > 0 else None,
+            'child_ticket_count': booking.ChildTicketCount if booking.ChildTicketCount > 0 else None,
+            'fast_track_adult_ticket_count': booking.FastTrackAdultTicketCount if booking.FastTrackAdultTicketCount > 0 else None,
+            'fast_track_child_ticket_count': booking.FastTrackChildTicketCount if booking.FastTrackChildTicketCount > 0 else None,
+            'senior_citizen_ticket_count': booking.SeniorCitizenTicketCount if booking.SeniorCitizenTicketCount > 0 else None,
+            'adult_college_id_offer_ticket_count': booking.AdultCollegeIdOfferTicketCount if booking.AdultCollegeIdOfferTicketCount > 0 else None,
+        }
+
+        return render(request, self.template_name, context)
 
 
 class ForgotPassword(View):
@@ -121,15 +178,15 @@ class CreateBookingView(View):
             adult_college_id_offer_ticket_price = 40
 
             total_price = (adult_ticket_count * adult_ticket_price) + (child_ticket_count * child_ticket_price) + (
-                        fast_track_adult_ticket_count * fast_track_adult_ticket_price) + (
-                                      fast_track_child_ticket_count * fast_track_child_ticket_price) + (
-                                      senior_citizen_ticket_count * senior_citizen_ticket_price) + (
-                                      adult_college_id_offer_ticket_count * adult_college_id_offer_ticket_price)
+                    fast_track_adult_ticket_count * fast_track_adult_ticket_price) + (
+                                  fast_track_child_ticket_count * fast_track_child_ticket_price) + (
+                                  senior_citizen_ticket_count * senior_citizen_ticket_price) + (
+                                  adult_college_id_offer_ticket_count * adult_college_id_offer_ticket_price)
 
             booking.totalPrice = total_price
 
             booking.save()
-            message = "booking successful"
-            return render(request, 'jumpstart/bookingsuccessful.html')
+            # message = "booking successful"
+            return redirect('booking_success', booking_id=booking.id)
             # return redirect('jumpstart/bookingpage.html', message, )
         return render(request, self.template_name, {'form': form})
